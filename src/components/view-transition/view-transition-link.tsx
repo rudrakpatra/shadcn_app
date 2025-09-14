@@ -30,14 +30,6 @@ export function ViewTransitionLink({
             return customAnimation;
         }
 
-        // Handle semantic animations
-        if (animation === ViewTransitions.Semantic.Forward) {
-            return animationPresets.slideLeft;
-        }
-        if (animation === ViewTransitions.Semantic.Backward) {
-            return animationPresets.slideRight;
-        }
-
         return animationPresets[animation as AnimationType];
     };
 
@@ -280,6 +272,8 @@ const animationPresets: Record<AnimationType | SemanticAnimationType, (duration:
             }
         );
     },
+
+
 
     custom: () => {
         // Custom animation will be handled by the customAnimation prop

@@ -5,7 +5,7 @@ import { ViewTransitionLink } from "@/components/view-transition/view-transition
 import { ViewTransitions } from "@/components/view-transition/view-transition-types";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ArrowLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef, useLayoutEffect, useState } from "react";
 
@@ -55,7 +55,7 @@ export default function ComponentsLayout({
 
             {/* Dynamic Back Button */}
             <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-                <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+                <div className="max-w-6xl mx-auto p-4 sm:p-5 md:p-6 lg:p-8 flex items-center justify-between">
                     <ViewTransitionLink href={backLink} animation={ViewTransitions.Semantic.Backward}>
                         <motion.div
                             className="group"
@@ -73,7 +73,7 @@ export default function ComponentsLayout({
                                         ease: "easeOut"
                                     }}
                                 >
-                                    <ArrowLeftIcon className="w-4 h-4" />
+                                    <ChevronLeftIcon className="w-4 h-4" />
                                 </motion.div>
 
                                 <motion.div
@@ -99,9 +99,7 @@ export default function ComponentsLayout({
             </div >
 
             {/* Page Content */}
-            < div className="p-8" >
-                {children}
-            </div >
+            {children}
         </div >
     );
 }

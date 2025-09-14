@@ -8,11 +8,22 @@ export type AnimationType =
     | "scaleFade"
     | "custom";
 
-// Semantic animation types
+/**
+ * ViewTransitions provides semantic animation mappings for navigation transitions.
+ * 
+ * - `Semantic.Forward`: Represents a forward navigation action (e.g., going deeper in navigation)
+ * - `Semantic.Backward`: Represents a backward navigation action (e.g., going back in navigation)
+ * 
+ * Usage:
+ *   ViewTransitions.Semantic.Forward
+ *   ViewTransitions.Semantic.Backward
+ */
 export const ViewTransitions = {
     Semantic: {
-        Forward: "slideLeft" as const,
-        Backward: "slideRight" as const,
+        // Forward navigation
+        Forward: "slideLeft" as AnimationType,
+        // Backward navigation
+        Backward: "slideRight" as AnimationType,
     }
 } as const;
 

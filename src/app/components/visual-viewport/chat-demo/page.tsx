@@ -111,8 +111,8 @@ export default function ChatDemoPage() {
                                 <div
                                     className={`absolute w-0 h-0 z-0
                                         ${msg.isUser
-                                            ? "bottom-[-5px] right-[-5px] border-l-[15px] border-l-primary border-t-[15px] border-t-transparent rotate-30"
-                                            : "bottom-[-5px] left-[-5px] border-r-[15px] border-r-card border-t-[15px] border-t-transparent -rotate-30"
+                                            ? "bottom-[-5px] right-[-8px] border-l-[25px] border-l-primary border-t-[25px] border-t-transparent rotate-30"
+                                            : "bottom-[-5px] left-[-8px] border-r-[25px] border-r-card border-t-[25px] border-t-transparent -rotate-30"
                                         }`}
                                 />
                             </motion.div>

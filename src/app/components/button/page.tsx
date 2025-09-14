@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export default function ButtonPage() {
     return (
-        <div className="max-w-6xl mx-auto p-8">
+        <div className="max-w-6xl mx-auto p-4 sm:p-5 md:p-6 lg:p-8">
             <div className="mb-8">
                 <h1 className="text-4xl font-bold text-foreground mb-4">
                     Button Component
@@ -158,16 +159,12 @@ export default function ButtonPage() {
                             <h3 className="text-lg font-semibold">Navigation Buttons</h3>
                             <div className="flex flex-wrap gap-3">
                                 <Button variant="outline">
-                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                    </svg>
+                                    <ChevronLeftIcon className="w-4 h-4" />
                                     Previous
                                 </Button>
                                 <Button variant="outline">
                                     Next
-                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
+                                    <ChevronRightIcon className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>

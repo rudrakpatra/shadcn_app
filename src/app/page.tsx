@@ -7,7 +7,7 @@ import { ViewTransitions } from "@/components/view-transition/view-transition-ty
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-5 md:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex justify-end mb-4">
