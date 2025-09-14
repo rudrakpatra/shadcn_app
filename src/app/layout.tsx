@@ -2,10 +2,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@/components/view-transition/view-transition-layout.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { DynamicThemeColor } from "@/components/dynamic-theme-color";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { ViewTransitions } from "next-view-transitions";
 import { Metadata, Viewport } from "next";
+import { DynamicThemeColor } from "@/components/dynamic-theme-color";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +47,16 @@ export default function RootLayout({
             initialColor="#171717"
             fallbackColor="#171717"
             storageKey="shadcn-ui-theme"
+          />
+          <meta
+            name="theme-color"
+            media="(prefers-color-scheme: light)"
+            content={"#ffffff"}
+          />
+          <meta
+            name="theme-color"
+            media="(prefers-color-scheme: dark)"
+            content={"#171717"}
           />
         </head>
         <body

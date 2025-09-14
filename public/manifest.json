@@ -5,17 +5,6 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#f59e0b",
-  "theme_colors": [
-    {
-      "color": "#f59e0b",
-      "media": "(prefers-color-scheme: light)"
-    },
-    {
-      "color": "#f59e0b",
-      "media": "(prefers-color-scheme: dark)"
-    }
-  ],
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",

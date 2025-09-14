@@ -85,6 +85,7 @@ export function DynamicThemeColor({ initialColor, fallbackColor, storageKey }: D
     return (
         <meta
             name="theme-color"
+            media="(prefers-color-scheme: light)"
             content={themeColor}
         />
     );
