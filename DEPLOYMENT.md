@@ -1,40 +1,17 @@
 # Deployment Guide
 
-This guide explains how to deploy the shadcn/ui app using GitHub Actions to multiple platforms.
+This guide explains how to deploy the shadcn/ui app using GitHub Actions to GitHub Pages.
 
-## 🚀 Supported Deployment Platforms
+## 🚀 Deployment Platform
 
-### 1. Vercel (Recommended)
-- **Best for**: Next.js applications, serverless functions
-- **Features**: Automatic deployments, preview deployments, edge functions
-- **Setup**: Connect your GitHub repository to Vercel
-
-### 2. Netlify
-- **Best for**: Static sites, JAMstack applications
-- **Features**: Form handling, serverless functions, branch previews
-- **Setup**: Connect your GitHub repository to Netlify
-
-### 3. GitHub Pages
-- **Best for**: Static sites, documentation
-- **Features**: Free hosting, custom domains
+### GitHub Pages
+- **Best for**: Static sites, documentation, portfolio sites
+- **Features**: Free hosting, custom domains, HTTPS
 - **Setup**: Enable GitHub Pages in repository settings
 
 ## 🔧 Required Secrets
 
-Add these secrets to your GitHub repository (`Settings > Secrets and variables > Actions`):
-
-### Vercel Deployment
-```
-VERCEL_TOKEN=your_vercel_token
-VERCEL_ORG_ID=your_org_id
-VERCEL_PROJECT_ID=your_project_id
-```
-
-### Netlify Deployment
-```
-NETLIFY_AUTH_TOKEN=your_netlify_token
-NETLIFY_SITE_ID=your_site_id
-```
+No additional secrets are required! GitHub Pages deployment uses the built-in `GITHUB_TOKEN` which is automatically provided by GitHub Actions.
 
 ## 📋 Workflow Overview
 
@@ -42,13 +19,11 @@ NETLIFY_SITE_ID=your_site_id
 - **Triggers**: Push to `main` branch
 - **Jobs**:
   1. **Test**: Lint, build, and test the application
-  2. **Deploy to Vercel**: Production deployment
-  3. **Deploy to Netlify**: Production deployment
-  4. **Deploy to GitHub Pages**: Production deployment
+  2. **Deploy to GitHub Pages**: Production deployment
 
-### Preview Deployment (`deploy-preview.yml`)
+### Preview Testing (`deploy-preview.yml`)
 - **Triggers**: Pull requests to `main`, pushes to `develop`/`staging`
-- **Features**: Preview deployments for testing
+- **Features**: Build testing and PR comments
 
 ### Security Checks (`security.yml`)
 - **Triggers**: Push to main branches, pull requests, weekly schedule
@@ -56,29 +31,18 @@ NETLIFY_SITE_ID=your_site_id
 
 ## 🛠️ Setup Instructions
 
-### 1. Vercel Setup
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Import your GitHub repository
-3. Get your tokens from Vercel settings
-4. Add secrets to GitHub repository
-
-### 2. Netlify Setup
-1. Go to [Netlify Dashboard](https://app.netlify.com/)
-2. Connect your GitHub repository
-3. Get your site ID and auth token
-4. Add secrets to GitHub repository
-
-### 3. GitHub Pages Setup
-1. Go to repository `Settings > Pages`
-2. Select source: "GitHub Actions"
-3. The workflow will automatically deploy
+### GitHub Pages Setup
+1. Go to your repository `Settings > Pages`
+2. Under "Source", select "GitHub Actions"
+3. The workflow will automatically deploy when you push to `main`
+4. Your site will be available at `https://yourusername.github.io/repository-name`
 
 ## 🔄 Deployment Process
 
 ### Automatic Deployments
-- **Production**: Push to `main` branch
-- **Preview**: Create pull request to `main`
-- **Staging**: Push to `develop` or `staging` branch
+- **Production**: Push to `main` branch → Deploys to GitHub Pages
+- **Testing**: Create pull request to `main` → Runs tests and comments on PR
+- **Staging**: Push to `develop` or `staging` branch → Runs tests
 
 ### Manual Deployments
 You can trigger deployments manually from the Actions tab:
@@ -93,10 +57,10 @@ You can trigger deployments manually from the Actions tab:
 - Check logs for any errors
 - Monitor build times and success rates
 
-### Platform Dashboards
-- **Vercel**: Monitor deployments, performance, and analytics
-- **Netlify**: Track builds, form submissions, and functions
-- **GitHub Pages**: View deployment history and status
+### GitHub Pages Dashboard
+- **Repository Settings > Pages**: View deployment history and status
+- **Actions Tab**: Monitor workflow runs and build logs
+- **Security Tab**: Review security alerts and dependency updates
 
 ## 🐛 Troubleshooting
 
@@ -108,9 +72,9 @@ You can trigger deployments manually from the Actions tab:
    - Review build logs for specific errors
 
 2. **Deployment Failures**
-   - Verify all required secrets are set
-   - Check platform-specific configuration
-   - Ensure repository permissions are correct
+   - Check GitHub Pages settings are configured correctly
+   - Ensure repository permissions allow Pages deployment
+   - Verify the workflow has the correct permissions
 
 3. **Static Export Issues**
    - Verify Next.js configuration
@@ -119,7 +83,7 @@ You can trigger deployments manually from the Actions tab:
 
 ### Getting Help
 - Check GitHub Actions logs for detailed error messages
-- Review platform-specific documentation
+- Review [GitHub Pages documentation](https://docs.github.com/en/pages)
 - Open an issue in the repository for support
 
 ## 🔒 Security Considerations
@@ -138,17 +102,8 @@ You can trigger deployments manually from the Actions tab:
 
 ## 🌐 Custom Domains
 
-### Vercel
-1. Add domain in Vercel dashboard
-2. Configure DNS settings
-3. Enable SSL certificate
-
-### Netlify
-1. Add custom domain in Netlify dashboard
-2. Configure DNS settings
-3. Enable HTTPS
-
 ### GitHub Pages
-1. Add CNAME file to repository
-2. Configure DNS settings
-3. Enable HTTPS in repository settings
+1. Add CNAME file to repository root with your domain name
+2. Configure DNS settings to point to GitHub Pages
+3. Enable HTTPS in repository settings (automatic)
+4. Wait for DNS propagation (up to 24 hours)

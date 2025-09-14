@@ -7,15 +7,12 @@ This repository includes comprehensive GitHub Actions workflows for CI/CD, secur
 ### 1. Main Deployment (`deploy.yml`)
 **Triggers**: Push to `main` branch
 - **Test Job**: Runs linting and builds the application
-- **Vercel Deployment**: Deploys to Vercel production
-- **Netlify Deployment**: Deploys to Netlify production  
 - **GitHub Pages Deployment**: Deploys to GitHub Pages
 
-### 2. Preview Deployment (`deploy-preview.yml`)
+### 2. Preview Testing (`deploy-preview.yml`)
 **Triggers**: Pull requests to `main`, pushes to `develop`/`staging`
-- **Preview Deployments**: Creates preview environments for testing
-- **Vercel Previews**: Automatic preview deployments for PRs
-- **Netlify Previews**: Branch preview deployments
+- **Build Testing**: Tests builds on pull requests
+- **PR Comments**: Automatically comments on successful builds
 
 ### 3. Security & Quality (`security.yml`)
 **Triggers**: Push to main branches, pull requests, weekly schedule
@@ -38,17 +35,13 @@ This repository includes comprehensive GitHub Actions workflows for CI/CD, secur
 - Proper labeling and commit message formatting
 
 ### Environment Variables
-Required secrets for deployment:
-- `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
-- `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`
-- `GITHUB_TOKEN` (automatically provided)
+No additional secrets required! GitHub Pages deployment uses the built-in `GITHUB_TOKEN` which is automatically provided by GitHub Actions.
 
 ## 📋 Setup Instructions
 
 1. **Enable GitHub Pages**: Go to Settings > Pages > Source: "GitHub Actions"
-2. **Add Secrets**: Go to Settings > Secrets and variables > Actions
-3. **Connect Platforms**: Link Vercel and Netlify to your repository
-4. **Configure Branches**: Set up `main`, `develop`, and `staging` branches
+2. **Configure Branches**: Set up `main`, `develop`, and `staging` branches
+3. **Push to Main**: The workflow will automatically deploy your site
 
 ## 🛠️ Local Testing
 
@@ -66,7 +59,7 @@ This script mimics the GitHub Actions build process:
 ## 📊 Monitoring
 
 - **Actions Tab**: View workflow runs and logs
-- **Platform Dashboards**: Monitor deployments on Vercel/Netlify
+- **Pages Tab**: Monitor GitHub Pages deployments
 - **Security Tab**: Review security alerts and dependency updates
 - **Dependabot**: Track automated dependency updates
 
@@ -78,27 +71,18 @@ This script mimics the GitHub Actions build process:
 - Secure secret management
 - Branch protection rules support
 
-## 🚀 Deployment Platforms
-
-### Vercel (Recommended)
-- **Best for**: Next.js applications
-- **Features**: Edge functions, automatic deployments
-- **Setup**: Connect GitHub repository to Vercel
-
-### Netlify
-- **Best for**: Static sites, JAMstack
-- **Features**: Form handling, serverless functions
-- **Setup**: Connect GitHub repository to Netlify
+## 🚀 Deployment Platform
 
 ### GitHub Pages
-- **Best for**: Static sites, documentation
-- **Features**: Free hosting, custom domains
+- **Best for**: Static sites, documentation, portfolio sites
+- **Features**: Free hosting, custom domains, HTTPS
 - **Setup**: Enable in repository settings
+- **URL**: `https://yourusername.github.io/repository-name`
 
 ## 📈 Performance Optimizations
 
 - **Caching**: npm cache in workflows
-- **Parallel Jobs**: Multiple deployment platforms simultaneously
+- **Parallel Jobs**: Test and deploy simultaneously
 - **Build Artifacts**: Reuse build outputs across jobs
 - **Conditional Deployments**: Only deploy on successful tests
 
