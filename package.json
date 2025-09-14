@@ -2,11 +2,14 @@
   "name": "shadcn_app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "build:static": "next build && next export",
     "start": "next start",
     "lint": "eslint",
+    "test:build": "node scripts/test-build.js",
     "generate-icon": "node scripts/generate-icon.js",
     "generate-manifest": "node scripts/generate-manifest.js",
     "predev": "npm run generate-icon && npm run generate-manifest"

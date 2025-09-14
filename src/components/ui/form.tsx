@@ -142,14 +142,22 @@ function FormMessage({ className, children, ...props }: React.ComponentProps<"p"
 
   // Extract event handlers to avoid conflicts with Framer Motion
   const {
-    onAnimationStart,
-    onAnimationEnd,
-    onAnimationIteration,
-    onDrag,
-    onDragEnd,
-    onDragStart,
+    onAnimationStart: _onAnimationStart,
+    onAnimationEnd: _onAnimationEnd,
+    onAnimationIteration: _onAnimationIteration,
+    onDrag: _onDrag,
+    onDragEnd: _onDragEnd,
+    onDragStart: _onDragStart,
     ...restProps
   } = props
+
+  // Suppress unused variable warnings for extracted handlers
+  void _onAnimationStart;
+  void _onAnimationEnd;
+  void _onAnimationIteration;
+  void _onDrag;
+  void _onDragEnd;
+  void _onDragStart;
 
   return (
     <AnimatePresence mode="wait">

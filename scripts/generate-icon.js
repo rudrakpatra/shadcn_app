@@ -5,9 +5,13 @@
  * This ensures the icon always uses the current theme colors
  */
 
-const fs = require('fs');
-const path = require('path');
-const { formatHex, parse } = require('culori');
+import fs from 'fs';
+import path from 'path';
+import { formatHex, parse } from 'culori';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Read globals.css to extract theme colors
 const globalsPath = path.join(__dirname, '../src/app/globals.css');

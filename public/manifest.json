@@ -25,25 +25,25 @@
   ],
   "icons": [
     {
-      "src": "//public/manifest-icon-192.maskable.png",
+      "src": "/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "//public/manifest-icon-192.maskable.png",
+      "src": "/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "//public/manifest-icon-512.maskable.png",
+      "src": "/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "//public/manifest-icon-512.maskable.png",
+      "src": "/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -63,19 +63,7 @@
       "url": "/components",
       "icons": [
         {
-          "src": "/icon.svg",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Fullscreen Demo",
-      "short_name": "Fullscreen",
-      "description": "Test fullscreen viewport functionality",
-      "url": "/components/fullscreen-viewport",
-      "icons": [
-        {
-          "src": "/icon.svg",
+          "src": "/manifest-icon-192.maskable.png",
           "sizes": "192x192"
         }
       ]

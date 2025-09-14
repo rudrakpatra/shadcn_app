@@ -72,7 +72,7 @@ export default function ChatDemoPage() {
                     </Button>
                 </ViewTransitionLink>
                 <div ref={scrollContainerRef} className="p-4 flex-1 space-y-4 overflow-y-auto">
-                    {messages.map((msg, index) => {
+                    {messages.map((msg) => {
                         const shouldAnimate = animateMessageId === msg.id;
 
                         return (

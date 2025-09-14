@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { ViewTransitionLink } from "@/components/view-transition/view-transition-link";
 import { ViewTransitions } from "@/components/view-transition/view-transition-types";
 
