@@ -47,7 +47,11 @@ export function DynamicThemeColor({ initialColor, fallbackColor, storageKey }: D
         };
 
         const updateThemeColor = () => {
-            setThemeColor(getThemeColorFromCSS());
+            const newColor = getThemeColorFromCSS();
+            setThemeColor(newColor);
+
+            // Also set the color of the HTML element
+            document.documentElement.style.color = newColor;
         };
 
         // Update immediately
