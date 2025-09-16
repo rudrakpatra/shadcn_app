@@ -11,7 +11,7 @@ import { useRef, useLayoutEffect, useState } from "react";
 
 export default function TopAppBar({
     showBack = true,
-    actions = [<ThemeSwitcher />],
+    actions = [<ThemeSwitcher key="theme-switcher" />],
     title
 }: {
     showBack?: boolean;

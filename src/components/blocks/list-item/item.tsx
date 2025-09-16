@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { GripVertical, Trash2 } from "lucide-react";
@@ -35,7 +34,6 @@ export interface ItemProps {
 
 export function Item({
     item,
-    index,
     isSelected = false,
     onSelect,
     onDelete,
@@ -52,16 +50,16 @@ export function Item({
 }: ItemProps) {
     const [isClient, setIsClient] = useState(false);
     const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const hasMovedRef = useRef(false);
 
     useEffect(() => {
         setIsClient(true);
     }, []);
 
     useEffect(() => {
+        const timeoutRef = clickTimeoutRef;
         return () => {
-            if (clickTimeoutRef.current) {
-                clearTimeout(clickTimeoutRef.current);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
             }
         };
     }, []);
@@ -102,14 +100,14 @@ export function Item({
             )}
             onClick={selectable && !showCheckbox ? handleSelect : undefined}
         >
-            <Card
+            <div
                 style={{
                     transform: CSS.Transform.toString(transform),
                     transition: transition,
                     ...style,
                 }}
                 className={cn(
-                    "transition-colors duration-200 ease-in-out",
+                    "relative p-4 border rounded-lg bg-card transition-colors duration-200 ease-in-out",
                     "hover:shadow-md scale-100",
                     isDragging && "opacity-50 shadow-lg",
                     dragOverlay && "shadow-2xl scale-105",
@@ -120,58 +118,56 @@ export function Item({
                 {...(isClient && !showDragHandle ? attributes : {})}
                 {...(isClient && !showDragHandle ? listeners : {})}
             >
-                <CardContent>
-                    <div className="flex items-center gap-3">
-                        {/* Drag Handle */}
-                        {showDragHandle && (
-                            <div
-                                {...(isClient ? attributes : {})}
-                                {...(isClient ? listeners : {})}
-                                className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded transition-colors"
-                            >
-                                <GripVertical className="h-4 w-4 text-muted-foreground" />
-                            </div>
-                        )}
-
-                        {/* Checkbox */}
-                        {selectable && showCheckbox && (
-                            <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={handleSelect}
-                                className="flex-shrink-0"
-                            />
-                        )}
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                            {children || (
-                                <>
-                                    <div className="font-medium text-sm truncate">
-                                        {item.title}
-                                    </div>
-                                    {item.description && (
-                                        <div className="text-xs text-muted-foreground truncate mt-1">
-                                            {item.description}
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                <div className="flex items-center gap-3">
+                    {/* Drag Handle */}
+                    {showDragHandle && (
+                        <div
+                            {...(isClient ? attributes : {})}
+                            {...(isClient ? listeners : {})}
+                            className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded transition-colors"
+                        >
+                            <GripVertical className="h-4 w-4 text-muted-foreground" />
                         </div>
+                    )}
 
-                        {/* Delete Button */}
-                        {onDelete && showDeleteButton && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleDelete}
-                                className="flex-shrink-0 h-8 w-8 p-0 hover:bg-destructive hover:text-destructive-foreground"
-                            >
-                                <Trash2 className="h-3 w-3" />
-                            </Button>
+                    {/* Checkbox */}
+                    {selectable && showCheckbox && (
+                        <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={handleSelect}
+                            className="flex-shrink-0"
+                        />
+                    )}
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                        {children || (
+                            <>
+                                <div className="font-medium text-sm truncate">
+                                    {item.title}
+                                </div>
+                                {item.description && (
+                                    <div className="text-xs text-muted-foreground truncate mt-1">
+                                        {item.description}
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
-                </CardContent>
-            </Card>
+
+                    {/* Delete Button */}
+                    {onDelete && showDeleteButton && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleDelete}
+                            className="flex-shrink-0 h-8 w-8 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                        >
+                            <Trash2 className="h-3 w-3" />
+                        </Button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

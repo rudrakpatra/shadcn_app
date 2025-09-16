@@ -25,13 +25,10 @@ import {
 } from "@dnd-kit/core";
 import {
     arrayMove,
-    useSortable,
     SortableContext,
     sortableKeyboardCoordinates,
     SortingStrategy,
     verticalListSortingStrategy,
-    AnimateLayoutChanges,
-    NewIndexGetter,
 } from "@dnd-kit/sortable";
 import { Item, ListItem } from "./item";
 import { cn } from "@/lib/utils";
@@ -66,14 +63,13 @@ export interface ListProps {
     showCheckbox?: boolean;
     showDeleteButton?: boolean;
     virtualized?: boolean;
-    maxHeight?: number;
+    virtualListHeight?: number;
     renderItem?: (item: ListItem, index: number) => React.ReactNode;
     className?: string;
     activationConstraint?: PointerActivationConstraint;
     swipeToDeleteThreshold?: number;
     // Enhanced drag and drop options
     adjustScale?: boolean;
-    animateLayoutChanges?: AnimateLayoutChanges;
     collisionDetection?: CollisionDetection;
     coordinateGetter?: KeyboardCoordinateGetter;
     dropAnimation?: DropAnimation | null;
@@ -91,7 +87,6 @@ export interface ListProps {
         isDragging: boolean;
         id: UniqueIdentifier;
     }) => React.CSSProperties;
-    isDisabled?: (id: UniqueIdentifier) => boolean;
     measuring?: MeasuringConfiguration;
     modifiers?: Modifiers;
     strategy?: SortingStrategy;
@@ -110,7 +105,7 @@ export function SortableList({
     showCheckbox = true,
     showDeleteButton = true,
     virtualized = false,
-    maxHeight = 400,
+    virtualListHeight = 400,
     renderItem,
     className,
     activationConstraint = {
@@ -120,13 +115,11 @@ export function SortableList({
     swipeToDeleteThreshold = 100,
     // Enhanced options
     adjustScale = false,
-    animateLayoutChanges,
     collisionDetection = closestCenter,
     coordinateGetter = sortableKeyboardCoordinates,
     dropAnimation = dropAnimationConfig,
     getItemStyles = () => ({}),
     wrapperStyle = () => ({}),
-    isDisabled = () => false,
     measuring,
     modifiers,
     strategy = verticalListSortingStrategy,
@@ -298,7 +291,7 @@ export function SortableList({
                 <div className={cn("w-full", className)}>
                     <VirtualList
                         width="100%"
-                        height={maxHeight}
+                        height={virtualListHeight}
                         itemCount={data.length}
                         itemSize={80}
                         renderItem={renderListItem}
@@ -340,13 +333,13 @@ export function SortableList({
                 {virtualized && data.length > 10 ? (
                     <VirtualList
                         width="100%"
-                        height={maxHeight}
+                        height={virtualListHeight}
                         itemCount={data.length}
                         itemSize={80}
                         renderItem={renderListItem}
                     />
                 ) : (
-                    <div className="space-y-2" style={{ maxHeight, overflowY: "auto" }}>
+                    <div className="space-y-2">
                         {data.map((item, index) => {
                             const isSelected = selectedItems.includes(item.id);
                             return (
@@ -387,42 +380,40 @@ export function SortableList({
             modifiers={modifiers}
         >
             <SortableContext items={data.map((item) => item.id)} strategy={strategy}>
-                <div className={cn("w-full", className)}>
-                    {virtualized && data.length > 10 ? (
-                        <VirtualList
-                            width="100%"
-                            height={maxHeight}
-                            itemCount={data.length}
-                            itemSize={80}
-                            stickyIndices={activeId != null ? [data.findIndex((item) => item.id === activeId)] : undefined}
-                            renderItem={renderListItem}
-                        />
-                    ) : (
-                        <div className="space-y-2" style={{ maxHeight, overflowY: "auto" }}>
-                            {data.map((item, index) => {
-                                const isSelected = selectedItems.includes(item.id);
-                                const aboutToDelete = aboutToDeleteId === item.id;
-                                return (
-                                    <Item
-                                        key={item.id}
-                                        item={item}
-                                        index={index}
-                                        isSelected={isSelected}
-                                        onSelect={onSelect}
-                                        onDelete={onDelete}
-                                        selectable={selectable}
-                                        showDragHandle={showDragHandle}
-                                        showCheckbox={showCheckbox}
-                                        showDeleteButton={showDeleteButton}
-                                        aboutToDelete={aboutToDelete}
-                                    >
-                                        {renderItem ? renderItem(item, index) : undefined}
-                                    </Item>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
+                {virtualized && data.length > 10 ? (
+                    <VirtualList
+                        width="100%"
+                        height={virtualListHeight}
+                        itemCount={data.length}
+                        itemSize={80}
+                        stickyIndices={activeId != null ? [data.findIndex((item) => item.id === activeId)] : undefined}
+                        renderItem={renderListItem}
+                    />
+                ) : (
+                    <div className={cn("w-full", className)}>
+                        {data.map((item, index) => {
+                            const isSelected = selectedItems.includes(item.id);
+                            const aboutToDelete = aboutToDeleteId === item.id;
+                            return (
+                                <Item
+                                    key={item.id}
+                                    item={item}
+                                    index={index}
+                                    isSelected={isSelected}
+                                    onSelect={onSelect}
+                                    onDelete={onDelete}
+                                    selectable={selectable}
+                                    showDragHandle={showDragHandle}
+                                    showCheckbox={showCheckbox}
+                                    showDeleteButton={showDeleteButton}
+                                    aboutToDelete={aboutToDelete}
+                                >
+                                    {renderItem ? renderItem(item, index) : undefined}
+                                </Item>
+                            );
+                        })}
+                    </div>
+                )}
             </SortableContext>
 
             {useDragOverlay && createPortal(

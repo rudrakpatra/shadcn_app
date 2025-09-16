@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useVisualViewport } from '@/hooks/use-visual-viewport';
 
 interface VisualViewportViewProps {
+    ref?: React.RefObject<HTMLDivElement | null>;
     children: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
@@ -15,6 +16,7 @@ interface VisualViewportViewProps {
 }
 
 export function VisualViewportView({
+    ref,
     children,
     className,
     style,
@@ -60,6 +62,7 @@ export function VisualViewportView({
 
     return (
         <div
+            ref={ref}
             className={className}
             style={{
                 ...dynamicStyle,
