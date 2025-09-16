@@ -53,6 +53,13 @@ const components = [
         status: "Available",
         category: "Views"
     },
+    {
+        name: "List & Item",
+        description: "Interactive sortable and selectable list components with drag-to-delete functionality.",
+        href: "/components/blocks",
+        status: "Available",
+        category: "Blocks"
+    },
 ];
 
 const categories = [...new Set(components.map(component => component.category))];

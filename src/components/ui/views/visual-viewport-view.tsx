@@ -2,18 +2,11 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useVisualViewport } from '@/hooks/use-visual-viewport';
-import { useScrollLock } from '@/hooks/use-scroll-lock';
-import { cn } from '@/lib/utils';
 
 interface VisualViewportViewProps {
     children: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
-    /**
-     * Whether to show debug information about the viewport
-     * @default false
-     */
-    debug?: boolean;
     /**
      * Whether to render immediately without waiting for hydration
      * @default false
@@ -25,7 +18,6 @@ export function VisualViewportView({
     children,
     className,
     style,
-    debug = false,
     immediatelyRender = false,
 }: VisualViewportViewProps) {
     const viewport = useVisualViewport();
@@ -39,30 +31,21 @@ export function VisualViewportView({
         }
     }, [immediatelyRender]);
 
-    // Lock scroll when VisualViewportView is mounted
-    useScrollLock({ autoLock: true });
-
-    // Scroll prevention hack
+    // The ultimate scroll prevention that prevent visual viewport from scrolling
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
-        if (!scrollContainer) {
-            console.log('scrollContainer is null, skipping');
-            return;
-        }
-
-        console.log('scrollContainer found, setting up scroll prevention');
-
-        const handleScrollEnd = () => {
-            // Revert to position after scroll ends to prevent overscroll
-            scrollContainer.scrollTo({ left: .5, top: .5, behavior: 'instant' });
-        };
-
+        if (!scrollContainer) return;
+        // Revert to position after scroll ends to prevent overscroll
+        const handleScrollEnd = () => scrollContainer.scrollTo({ left: .5, top: .5, behavior: 'instant' });
+        //overscroll contain to prevent overscroll
+        scrollContainer.style.overscrollBehavior = 'contain';
         scrollContainer.addEventListener('scrollend', handleScrollEnd);
 
         // Set initial scroll position
-        scrollContainer.scrollTo({ left: .5, top: .5, behavior: "instant" });
+        handleScrollEnd();
 
         return () => {
+            scrollContainer.style.overscrollBehavior = 'auto';
             scrollContainer.removeEventListener('scrollend', handleScrollEnd);
         };
     }, [isMounted]); // Run when component is mounted
@@ -77,10 +60,7 @@ export function VisualViewportView({
 
     return (
         <div
-            className={cn(
-                debug && "border-2 border-blue-500 border-dashed",
-                className
-            )}
+            className={className}
             style={{
                 ...dynamicStyle,
                 position: 'fixed',
@@ -113,15 +93,6 @@ export function VisualViewportView({
                     {children}
                 </div>
             </div>
-            {debug && (
-                <div className="absolute top-2 left-2 bg-black/80 text-white text-xs p-2 rounded font-mono">
-                    <div>Width: {viewport.width}px</div>
-                    <div>Height: {viewport.height}px</div>
-                    <div>Offset: ({viewport.offsetLeft}, {viewport.offsetTop})</div>
-                    <div>Page: ({viewport.pageLeft}, {viewport.pageTop})</div>
-                    <div>Scale: {viewport.scale}</div>
-                </div>
-            )}
         </div>
     );
 }

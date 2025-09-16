@@ -1,9 +1,0 @@
-::backdrop {
-    z-index:0;  
-    background-color: var(--background) !important;
-}
-
-html, *:fullscreen, *:-webkit-full-screen, *:-moz-full-screen {
-    background-color: var(--background) !important;
-    z-index:1;
-}
