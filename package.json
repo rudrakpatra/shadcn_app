@@ -15,10 +15,13 @@
     "predev": "npm run generate-icon && npm run generate-manifest"
   },
   "dependencies": {
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/helpers": "^0.1.21",
-    "@dnd-kit/react": "^0.1.21",
-    "@dnd-kit/sortable": "^10.0.0",
+    "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^2.1.0",
+    "@atlaskit/pragmatic-drag-and-drop-flourish": "^2.0.7",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
+    "@atlaskit/pragmatic-drag-and-drop-live-region": "^1.3.1",
+    "@atlaskit/pragmatic-drag-and-drop-react-accessibility": "^2.1.1",
+    "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator": "^3.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -42,11 +45,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
-    "react-tiny-virtual-list": "^2.2.0",
     "react-window": "^2.1.0",
     "react-window-infinite-loader": "^2.0.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
+    "tiny-invariant": "^1.3.0",
     "zod": "^4.1.8"
   },
   "devDependencies": {

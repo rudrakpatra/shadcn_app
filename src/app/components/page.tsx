@@ -54,8 +54,8 @@ const components = [
         category: "Views"
     },
     {
-        name: "List & Item",
-        description: "Interactive sortable and selectable list components with drag-to-delete functionality.",
+        name: "Blocks",
+        description: "Complex UI components and layouts for building rich user interfaces.",
         href: "/components/blocks",
         status: "Available",
         category: "Blocks"
