@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { List, ListItem, type Item } from '@/components/blocks/list/list';
 
 const defaultItems: Item[] = [
@@ -129,7 +128,7 @@ export default function ListPage() {
                     onReorder={handleProjectReorder}
                     onDelete={handleProjectDelete}
                     renderItem={(item, index) => (
-                        <ListItem item={item} index={index} Content={({ item }) => (
+                        <ListItem item={item} index={index} Content={() => (
                             <div className="space-y-2">
                                 <p className="text-sm text-muted-foreground">
                                     Status: In Progress

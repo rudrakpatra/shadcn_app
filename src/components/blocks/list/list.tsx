@@ -391,7 +391,7 @@ interface ListItemProps {
 }
 
 export function ListItem({ item, index, Content }: ListItemProps) {
-    const { registerItem, instanceId, deleteItem } = useListContext();
+    const { registerItem, instanceId } = useListContext();
 
     const ref = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
