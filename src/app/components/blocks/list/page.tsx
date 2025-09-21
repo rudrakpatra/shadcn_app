@@ -72,6 +72,14 @@ export default function ListPage() {
         setProjects(newProjects);
     };
 
+    const handleDelete = (itemId: string) => {
+        setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    };
+
+    const handleProjectDelete = (itemId: string) => {
+        setProjects(prevProjects => prevProjects.filter(project => project.id !== itemId));
+    };
+
     const resetItems = () => {
         setItems(defaultItems);
         setProjects(projectItems);
@@ -97,16 +105,15 @@ export default function ListPage() {
                 <div className="space-y-2">
                     <h2 className="text-2xl font-semibold">Basic Sortable List</h2>
                     <p className="text-muted-foreground">
-                        A simple list with drag & drop reordering. Grab the drag handle to reorder items.
+                        A simple list with drag & drop reordering. Grab the drag handle to reorder items, or drag to the delete zone at the bottom of the screen to remove items.
                     </p>
                 </div>
+                <List
+                    items={items}
+                    onReorder={handleReorder}
+                    onDelete={handleDelete}
+                />
 
-                <div className="max-w-2xl">
-                    <List
-                        items={items}
-                        onReorder={handleReorder}
-                    />
-                </div>
             </section>
 
             {/* Custom List Items */}
@@ -114,29 +121,23 @@ export default function ListPage() {
                 <div className="space-y-2">
                     <h2 className="text-2xl font-semibold">Custom List Items</h2>
                     <p className="text-muted-foreground">
-                        List with custom rendering using the ListItem component with additional content.
+                        List with custom rendering using the ListItem component with additional content. Drag to the delete zone to remove items.
                     </p>
                 </div>
-
-                <div className="max-w-2xl">
-                    <List
-                        items={projects}
-                        onReorder={handleProjectReorder}
-                        renderItem={(item, index) => (
-                            <ListItem item={item} index={index}>
-                                <div className="space-y-2">
-                                    <p className="text-sm text-muted-foreground">
-                                        Status: In Progress
-                                    </p>
-                                    <div className="flex gap-2">
-                                        <Badge variant="outline">Frontend</Badge>
-                                        <Badge variant="outline">High Priority</Badge>
-                                    </div>
-                                </div>
-                            </ListItem>
-                        )}
-                    />
-                </div>
+                <List
+                    items={projects}
+                    onReorder={handleProjectReorder}
+                    onDelete={handleProjectDelete}
+                    renderItem={(item, index) => (
+                        <ListItem item={item} index={index} Content={({ item }) => (
+                            <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">
+                                    Status: In Progress
+                                </p>
+                            </div>
+                        )} />
+                    )}
+                />
             </section>
 
             {/* Features */}
@@ -187,6 +188,22 @@ export default function ListPage() {
                                 <li>• Screen reader support</li>
                                 <li>• Keyboard navigation</li>
                                 <li>• Live region announcements</li>
+                            </ul>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Drag to Delete</CardTitle>
+                            <CardDescription>
+                                Drag items to the delete zone at the bottom of the screen
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="text-sm space-y-1">
+                                <li>• Fixed delete zone at bottom center</li>
+                                <li>• Visual feedback on hover</li>
+                                <li>• Intuitive drop-to-delete pattern</li>
                             </ul>
                         </CardContent>
                     </Card>

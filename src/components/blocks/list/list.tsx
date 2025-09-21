@@ -9,7 +9,6 @@ import React, {
     useMemo,
     useRef,
     useState,
-    useLayoutEffect,
 } from 'react';
 
 import ReactDOM from 'react-dom';
@@ -34,9 +33,8 @@ import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/el
 import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { GripVertical } from 'lucide-react';
-import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box';
+import { GripVertical, X } from 'lucide-react';
+
 
 type ItemPosition = 'first' | 'last' | 'middle' | 'only';
 
@@ -52,6 +50,7 @@ type ListContextValue = {
         indexOfTarget: number;
         closestEdgeOfTarget: Edge | null;
     }) => void;
+    deleteItem?: (itemId: string) => void;
     instanceId: symbol;
 };
 
@@ -66,6 +65,8 @@ function useListContext() {
 export type Item = {
     id: string;
     label: string;
+    closestEdge?: Edge | null;
+    draggableState?: DraggableState;
 };
 
 const itemKey = Symbol('item');
@@ -136,6 +137,7 @@ type ListState = {
 interface ListProps {
     items: Item[];
     onReorder?: (items: Item[]) => void;
+    onDelete?: (itemId: string) => void;
     renderItem?: (item: Item, index: number) => React.ReactNode;
     className?: string;
 }
@@ -143,6 +145,7 @@ interface ListProps {
 export function List({
     items: initialItems,
     onReorder,
+    onDelete,
     renderItem = (item, index) => {
         return <ListItem
             key={item.id}
@@ -157,7 +160,8 @@ export function List({
         lastCardMoved: null,
     });
     const [registry] = useState(getItemRegistry);
-    const [itemPositions, setItemPositions] = useState<Map<string, number>>(new Map());
+    const [isDragOverDeleteZone, setIsDragOverDeleteZone] = useState(false);
+    const [isAnyItemDragging, setIsAnyItemDragging] = useState(false);
 
     // Isolated instances of this component from one another
     const [instanceId] = useState(() => Symbol('instance-id'));
@@ -167,57 +171,6 @@ export function List({
         setListState(prev => ({ ...prev, items: initialItems }));
     }, [initialItems]);
 
-    // Capture positions before reorder
-    const capturePositions = useCallback(() => {
-        const newPositions = new Map<string, number>();
-        items.forEach((item) => {
-            const element = registry.getElement(item.id);
-            if (element) {
-                const rect = element.getBoundingClientRect();
-                newPositions.set(item.id, rect.top);
-            }
-        });
-        setItemPositions(newPositions);
-    }, [items, registry]);
-
-    // Animate to new positions
-    const animateToNewPositions = useCallback(() => {
-
-        items.forEach((item) => {
-            const element = registry.getElement(item.id);
-            if (element) {
-                const oldY = itemPositions.get(item.id);
-                const newRect = element.getBoundingClientRect();
-                const newY = newRect.top;
-
-                if (oldY !== undefined && oldY !== newY) {
-                    const deltaY = oldY - newY;
-
-                    // Set initial position
-                    element.style.transform = `translateY(${deltaY}px)`;
-                    element.style.transition = 'none';
-
-                    // Force reflow
-                    element.offsetHeight;
-
-                    // Animate to final position
-                    element.style.transition = 'transform 300ms cubic-bezier(0.2, 0, 0.2, 1)';
-                    element.style.transform = 'translateY(0px)';
-                }
-            }
-        });
-
-        setTimeout(() => {
-            // Clean up transforms
-            items.forEach((item) => {
-                const element = registry.getElement(item.id);
-                if (element) {
-                    element.style.transform = '';
-                    element.style.transition = '';
-                }
-            });
-        }, 300);
-    }, [items, itemPositions, registry]);
 
     const reorderItem = useCallback(
         ({
@@ -241,9 +194,6 @@ export function List({
                 return;
             }
 
-            // Capture current positions before reordering
-            capturePositions();
-
             setListState((listState) => {
                 const item = listState.items[startIndex];
                 const newItems = reorder({
@@ -252,9 +202,9 @@ export function List({
                     finishIndex,
                 });
 
-                // Defer the onReorder callback to avoid setState during render
+                // Call onReorder after the state update is queued
                 if (onReorder) {
-                    setTimeout(() => onReorder(newItems), 0);
+                    queueMicrotask(() => onReorder(newItems));
                 }
 
                 return {
@@ -268,15 +218,8 @@ export function List({
                 };
             });
         },
-        [onReorder, capturePositions],
+        [onReorder],
     );
-
-    // Trigger animation after items change
-    useLayoutEffect(() => {
-        if (lastCardMoved !== null) {
-            animateToNewPositions();
-        }
-    }, [lastCardMoved, animateToNewPositions]);
 
     useEffect(() => {
         return monitorForElements({
@@ -311,6 +254,22 @@ export function List({
         });
     }, [instanceId, items, reorderItem]);
 
+    // Monitor for drag start/end to show/hide delete zone
+    useEffect(() => {
+        return monitorForElements({
+            canMonitor({ source }) {
+                return isItemData(source.data) && source.data.instanceId === instanceId;
+            },
+            onDragStart() {
+                setIsAnyItemDragging(true);
+            },
+            onDrop() {
+                setIsAnyItemDragging(false);
+                setIsDragOverDeleteZone(false);
+            },
+        });
+    }, [instanceId]);
+
     // once a drag is finished, we have some post drop actions to take
     useEffect(() => {
         if (lastCardMoved === null) {
@@ -326,6 +285,7 @@ export function List({
         );
     }, [lastCardMoved]);
 
+
     // cleanup the live region when this component is finished
     useEffect(() => {
         return function cleanup() {
@@ -335,14 +295,61 @@ export function List({
 
     const getListLength = useCallback(() => items.length, [items.length]);
 
+    const deleteItem = useCallback((itemId: string) => {
+        setListState(prevState => {
+            const newItems = prevState.items.filter(item => item.id !== itemId);
+            return {
+                ...prevState,
+                items: newItems,
+            };
+        });
+
+        // Call onDelete immediately after state update
+        if (onDelete) {
+            onDelete(itemId);
+        }
+    }, [onDelete]);
+
+    // Create delete zone drop target
+    const deleteZoneRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const element = deleteZoneRef.current;
+        if (!element) return;
+
+        return dropTargetForElements({
+            element,
+            canDrop({ source }) {
+                return isItemData(source.data) && source.data.instanceId === instanceId;
+            },
+            onDragEnter() {
+                setIsDragOverDeleteZone(true);
+            },
+            onDragLeave() {
+                setIsDragOverDeleteZone(false);
+            },
+            onDrop({ source }) {
+                const sourceData = source.data;
+                if (!isItemData(sourceData)) return;
+
+                // Delete the item
+                if (deleteItem) {
+                    deleteItem(sourceData.item.id);
+                }
+                setIsDragOverDeleteZone(false);
+            },
+        });
+    }, [instanceId, deleteItem]);
+
     const contextValue: ListContextValue = useMemo(() => {
         return {
             registerItem: registry.register,
             reorderItem,
+            deleteItem,
             instanceId,
             getListLength,
         };
-    }, [registry.register, reorderItem, instanceId, getListLength]);
+    }, [registry.register, reorderItem, deleteItem, instanceId, getListLength]);
 
     return (
         <ListContext.Provider value={contextValue}>
@@ -355,6 +362,24 @@ export function List({
                     );
                 })}
             </div>
+
+            {/* Delete Zone - Always render but with conditional visibility */}
+            <div
+                ref={deleteZoneRef}
+                className={cn(
+                    "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50",
+                    "w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center",
+                    "transition-all duration-300 ease-in-out",
+                    "opacity-0 translate-y-4 pointer-events-none",
+                    isAnyItemDragging && "opacity-100 translate-y-0 pointer-events-auto",
+                    isDragOverDeleteZone
+                        ? "bg-destructive border-destructive text-destructive-foreground scale-110"
+                        : "bg-background border-muted-foreground text-muted-foreground"
+                )}
+                aria-label="Drop here to delete item"
+            >
+                <X className="w-6 h-6" />
+            </div>
         </ListContext.Provider>
     );
 }
@@ -362,14 +387,14 @@ export function List({
 interface ListItemProps {
     item: Item;
     index: number;
-    children?: React.ReactNode;
+    Content?: React.FC<{ item: Item }>;
 }
 
-export function ListItem({ item, index, children }: ListItemProps) {
-    const { registerItem, instanceId } = useListContext();
+export function ListItem({ item, index, Content }: ListItemProps) {
+    const { registerItem, instanceId, deleteItem } = useListContext();
 
     const ref = useRef<HTMLDivElement>(null);
-    const dragHandleRef = useRef<HTMLButtonElement>(null);
+    const dragHandleRef = useRef<HTMLDivElement>(null);
 
     const [draggableState, setDraggableState] = useState<DraggableState>(idleState);
     const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
@@ -408,6 +433,7 @@ export function ListItem({ item, index, children }: ListItemProps) {
 
             setClosestEdge(closestEdge);
         }
+
 
         return combine(
             registerItem({ itemId: item.id, element }),
@@ -455,33 +481,37 @@ export function ListItem({ item, index, children }: ListItemProps) {
                 onDrop() {
                     setClosestEdge(null);
                 },
-            }),
+            })
         );
     }, [instanceId, item, index, registerItem]);
 
     return (
         <Fragment>
+            {index != 0 && (
+                <div className='h-[1px] bg-border' />
+            )}
             <div
                 ref={ref}
                 className={cn(
-                    "relative bg-card text-card-foreground border-b last:border-b-0 border-border transition-colors",
+                    "relative bg-card text-card-foreground origin-center",
                     draggableState.type === 'dragging' && "opacity-40 z-50"
                 )}
             >
                 <div className="flex items-center gap-3 p-4">
-                    <Button
+                    <div
                         ref={dragHandleRef}
-                        variant="ghost"
-                        size="sm"
-                        className="cursor-grab active:cursor-grabbing"
+                        className="cursor-grab active:cursor-grabbing p-2"
                         aria-label={`Reorder ${item.label}`}
-                        type="button"
                     >
                         <GripVertical className="w-4 h-4" />
-                    </Button>
+                    </div>
                     <div className="flex-1 truncate">
                         {item.label}
-                        {children}
+                        {Content && <Content item={{
+                            ...item,
+                            closestEdge,
+                            draggableState
+                        }} />}
                     </div>
                 </div>
                 {closestEdge && (
